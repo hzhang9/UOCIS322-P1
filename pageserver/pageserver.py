@@ -1,16 +1,9 @@
 """
   A trivial web server in Python.
 
-  Based largely on https://docs.python.org/3.4/howto/sockets.html
-  This trivial implementation is not robust:  We have omitted decent
-  error handling and many other things to keep the illustration as simple
-  as possible.
-
-  FIXME:
-  Currently this program always serves an ascii graphic of a cat.
-  Change it to serve files if they end with .html or .css, and are
-  located in ./pages  (where '.' is the directory from which this
-  program is run).
+  If URL end with .html or .css and do exist, send content of file.
+  If URL include // or .. or ~, send 403.
+  If file doesn't exist in URL, send 404.
 """
 
 import config    # Configure from .ini files and command line
@@ -89,18 +82,23 @@ def respond(sock):
     log.info("--- Received request ----")
     log.info("Request was {}\n***\n".format(request))
     parts = request.split()
-    f=parts[1]
-    p=f'{docroot}{f}'
+    f=parts[1]#path of the file
+    p=f'{docroot}{f}'#path of the file,include docroot(pages/)
     if len(parts) > 1 and parts[0] == "GET":
         if f[-5:]==".html" or f[-4:]==".css":
+        #make sure f is .html or .css file
             if "//" in f or ".." in f or "~" in f:
+            #if // or .. or ~ in path, send 403
                 transmit(STATUS_FORBIDDEN,sock)
             else:
                 if os.path.isfile(p):
+                #check whether file exist in the path,if exist,
+                #send success and content of the file
                     transmit(STATUS_OK,sock)
                     f=open(p,"r")
                     transmit(f.read(),sock)
                 else:
+                #else, send 404
                     transmit(STATUS_NOT_FOUND,sock)
     else:
         log.info("Unhandled request: {}".format(request))
@@ -147,7 +145,7 @@ def get_options():
 def main():
     options = get_options()
     global docroot
-    docroot=options.DOCROOT
+    docroot=options.DOCROOT #save DOCROOR in .ini into docroot
     port = options.PORT
     if options.DEBUG:
         log.setLevel(logging.DEBUG)
