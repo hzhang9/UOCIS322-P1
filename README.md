@@ -20,5 +20,5 @@ send content of `name.html` or `name.css` with proper http response.
 respond with 403 forbidden error. For example, `url=hostname:5000/..name.html`
 or `/~name.html` would give 403 forbidden error.
 
-### identifying information###
+### identifying information ###
 Author: Haoran Zhang, hzhang9@uoregon.edu
