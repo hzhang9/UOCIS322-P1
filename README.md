@@ -11,7 +11,7 @@ The objectives of this mini-project are:
   basic web architecture
   * Use automated tests to check progress (plus manual tests for good measure)
 
-###instructions###
+### instructions ###
 (a) If URL ends with `name.html` or `name.css`
 (i.e., if `path/to/name.html` is in document path (from DOCROOT)),
 send content of `name.html` or `name.css` with proper http response.
