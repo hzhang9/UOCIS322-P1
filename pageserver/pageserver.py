@@ -85,21 +85,19 @@ def respond(sock):
     f=parts[1]#path of the file
     p=f'{docroot}{f}'#path of the file,include docroot(pages/)
     if len(parts) > 1 and parts[0] == "GET":
-        if f[-5:]==".html" or f[-4:]==".css":
-        #make sure f is .html or .css file
-            if "//" in f or ".." in f or "~" in f:
-            #if // or .. or ~ in path, send 403
-                transmit(STATUS_FORBIDDEN,sock)
+        if "//" in f or ".." in f or "~" in f:
+        #if // or .. or ~ in path, send 403
+            transmit(STATUS_FORBIDDEN,sock)
+        else:
+            if os.path.isfile(p):
+            #check whether file exist in the path,if exist,
+            #send success and content of the file
+                transmit(STATUS_OK,sock)
+                f=open(p,"r")
+                transmit(f.read(),sock)
             else:
-                if os.path.isfile(p):
-                #check whether file exist in the path,if exist,
-                #send success and content of the file
-                    transmit(STATUS_OK,sock)
-                    f=open(p,"r")
-                    transmit(f.read(),sock)
-                else:
-                #else, send 404
-                    transmit(STATUS_NOT_FOUND,sock)
+            #else, send 404
+                transmit(STATUS_NOT_FOUND,sock)
     else:
         log.info("Unhandled request: {}".format(request))
         transmit(STATUS_NOT_IMPLEMENTED, sock)
